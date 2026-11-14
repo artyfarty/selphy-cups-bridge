@@ -1,0 +1,19 @@
+services:
+  cups-bridge:
+    build: .
+    image: cups-bridge:local
+    container_name: cups-bridge
+    # Host networking: mDNS (DNS-SD) must reach the LAN, and clients connect to :631 directly.
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - cups-state:/etc/cups   # keeps the queue's printer-uuid stable across restarts
+    environment:
+      PRINTER_URI: ${PRINTER_URI:?set PRINTER_URI in .env, e.g. ipp://192.168.1.50:631/ipp/print}
+      # QUEUE_NAME: selphy
+      # MODEL_NAME: Canon SELPHY CP1500 (CUPS bridge)
+      # PRINT_SCALING: fill    # fill | fit | auto | none
+      # DNSSD: "1"             # "0" to skip avahi (e.g. behind Docker NAT)
+
+volumes:
+  cups-state:
